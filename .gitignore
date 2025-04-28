@@ -1,0 +1,11 @@
+# venv
+.venv/
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Logs, OS files
+*.log
+.DS_Store
+
