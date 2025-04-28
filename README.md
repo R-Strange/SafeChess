@@ -11,7 +11,6 @@ A Python tool to analyze the *instability* (risk) of engine-preferred opening mo
 - **SQLite Storage** of positions, analysis results, and known lines  
 - **CLI Interface** (`safechess analyze`) for easy invocation  
 - **Export** to CSV/JSON and Jupyter notebooks for deeper exploration  
-<!-- Maybe group core MVP features separately from upcoming R1/R2 features for clarity. -->
 
 ## Installation
 
@@ -32,13 +31,17 @@ A Python tool to analyze the *instability* (risk) of engine-preferred opening mo
 
 Run a basic instability analysis on a PGN:
 
+```bash
   safechess analyze \
     --input games.pgn \
     --depth 18 \
     --samples 5 \
     --output results.db
+```
 For more options, use:
+  ```bash
   safechess analyze --help
+```
 
 
 ## Contributing
