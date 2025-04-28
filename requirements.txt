@@ -1,0 +1,22 @@
+# requirements.txt
+
+# Chess & engine
+python-chess>=1.9.0
+stockfish>=0.13.2
+
+# CLI
+click>=8.0.0
+
+# Configuration
+PyYAML>=6.0
+toml>=0.10.2
+
+# Analysis & caching
+pandas>=2.0.0
+cachetools>=5.3.0
+tqdm>=4.64.0
+
+# Plotting & notebooks
+matplotlib>=3.6.0
+jupyter>=1.0.0
+
