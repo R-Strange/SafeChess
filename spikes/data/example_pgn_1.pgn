@@ -1,0 +1,18 @@
+[Event "Let\\'s Play!"]
+[Site "Chess.com"]
+[Date "2025.03.25"]
+[Round "?"]
+[White "DebunkedRavioli"]
+[Black "PossiblyNot"]
+[Result "0-1"]
+[TimeControl "1/604800"]
+[WhiteElo "1243"]
+[BlackElo "1437"]
+[Termination "PossiblyNot won by resignation"]
+[ECO "D20"]
+[EndDate "2025.04.21"]
+[Link "https://www.chess.com/game/daily/792707523"]
+
+1. d4 d5 2. c4 dxc4 3. e4 e5 4. dxe5 Qxd1+ 5. Kxd1 Nc6 6. Bxc4 Nxe5 7. Bb3 Nd3
+8. Be3 Bd7 9. Kc2 Nb4+ 10. Kd2 O-O-O 11. Bxa7 Bh3+ 12. Ke3 Bxg2 13. a3 Na6 14.
+Bxf7 Nf6 15. e5 Nd5+ 16. Ke2 b6 17. Be6+ Kb7 0-1
