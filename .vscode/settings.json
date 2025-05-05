@@ -11,5 +11,14 @@
   "files.exclude": {
     "**/__pycache__": true,
     "**/.pytest_cache": true
-  }
+  },
+  // --- Pytest configuration ---
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests", // root folder to scan
+    "-q" // quiet output, matches CI
+  ],
+  // optional: re-discover tests on save
+  "python.testing.autoTestDiscoverOnSaveEnabled": true
 }

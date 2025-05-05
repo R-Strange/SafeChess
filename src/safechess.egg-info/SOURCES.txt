@@ -1,0 +1,9 @@
+README.md
+pyproject.toml
+src/safechess/__init__.py
+src/safechess/engine.py
+src/safechess.egg-info/PKG-INFO
+src/safechess.egg-info/SOURCES.txt
+src/safechess.egg-info/dependency_links.txt
+src/safechess.egg-info/requires.txt
+src/safechess.egg-info/top_level.txt
