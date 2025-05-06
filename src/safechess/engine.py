@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import subprocess
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import List, Optional
+from subprocess import PIPE
+from typing import IO, Dict, List, Optional, cast
 
 # --- ERROR TAXONOMY ---
 
@@ -69,10 +71,23 @@ class Engine(ABC):
 
 class StockfishEngine(Engine):
     def __init__(self, path: str) -> None:
-        raise NotImplementedError
+        self._proc = subprocess.Popen(
+            path, stdin=PIPE, stdout=PIPE, text=True
+        )  # text mode is critical, don't forget newlines!
+
+        self._proc_stdin: IO[str] = cast(IO[str], self._proc.stdin)  # mypy helpers
+        self._proc_stdout: IO[str] = cast(IO[str], self._proc.stdout)
+        self._proc_stderr: IO[str] = cast(IO[str], self._proc.stderr)
+
+        self._options: Dict[str, str] = {}
 
     def set_option(self, name: str, value: str | int) -> None:
-        raise NotImplementedError
+        value = str(value)
+        command: str = f"setoption name {name} value {value}\n"
+        self._proc_stdin.write(command)
+        self._options[name] = value
+        # TODO error handling if proc cmd fails,
+        # so that ouroptions dict doesn't go out of sync
 
     def analyse(
         self, fen: str, *, depth: int | None = None, time_ms: int | None = None
@@ -80,7 +95,14 @@ class StockfishEngine(Engine):
         raise NotImplementedError
 
     def close(self) -> None:
-        raise NotImplementedError
+        # stub to be updated
+        try:
+            self._proc.terminate()
+        except Exception:
+            pass
+
+    def get_option(self, name: str) -> str:
+        return self._options[name]
 
 
 class MockEngine(Engine):
