@@ -77,7 +77,6 @@ class StockfishEngine(Engine):
 
         self._proc_stdin: IO[str] = cast(IO[str], self._proc.stdin)  # mypy helpers
         self._proc_stdout: IO[str] = cast(IO[str], self._proc.stdout)
-        self._proc_stderr: IO[str] = cast(IO[str], self._proc.stderr)
 
         self._options: Dict[str, str] = {}
 
@@ -106,8 +105,8 @@ class StockfishEngine(Engine):
 
 
 class MockEngine(Engine):
-    def __init__(self, path: str) -> None:
-        raise NotImplementedError
+    def __init__(self) -> None:
+        pass
 
     def set_option(self, name: str, value: str | int) -> None:
         raise NotImplementedError
@@ -115,7 +114,11 @@ class MockEngine(Engine):
     def analyse(
         self, fen: str, *, depth: int | None = None, time_ms: int | None = None
     ) -> Evaluation:
-        raise NotImplementedError
+        deterministic_evaluation: Evaluation = Evaluation(
+            score_cp=20, mate=None, pv=["e2e4"]
+        )
+
+        return deterministic_evaluation
 
     def close(self) -> None:
-        raise NotImplementedError
+        pass
