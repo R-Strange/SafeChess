@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import subprocess
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from subprocess import PIPE
-from typing import IO, Dict, List, Optional, cast
+from typing import Dict, List, Optional
 
 # --- ERROR TAXONOMY ---
 
@@ -75,15 +76,14 @@ class StockfishEngine(Engine):
             path, stdin=PIPE, stdout=PIPE, text=True
         )  # text mode is critical, don't forget newlines!
 
-        self._proc_stdin: IO[str] = cast(IO[str], self._proc.stdin)  # mypy helpers
-        self._proc_stdout: IO[str] = cast(IO[str], self._proc.stdout)
-
         self._options: Dict[str, str] = {}
 
     def set_option(self, name: str, value: str | int) -> None:
         value = str(value)
         command: str = f"setoption name {name} value {value}\n"
-        self._proc_stdin.write(command)
+
+        assert self._proc.stdin is not None
+        self._proc.stdin.write(command)
         self._options[name] = value
         # TODO error handling if proc cmd fails,
         # so that ouroptions dict doesn't go out of sync
@@ -91,7 +91,76 @@ class StockfishEngine(Engine):
     def analyse(
         self, fen: str, *, depth: int | None = None, time_ms: int | None = None
     ) -> Evaluation:
-        raise NotImplementedError
+        def build_go_command(
+            depth: int | None = None, time_ms: int | None = None
+        ) -> str:
+            match (depth, time_ms):
+                case (None, None):
+                    return "go"
+
+                case (d, None) if isinstance(d, int):
+                    return f"go depth {d}"
+
+                case (None, t) if isinstance(t, int):
+                    return f"go movetime {t}"
+
+                case (d, t) if isinstance(d, int) and isinstance(t, int):
+                    return f"go depth {d} movetime {t}"
+
+                case _:
+                    raise OptionValidationError(
+                        f"Invalid Parameters: Depth = {depth}, Movetime = {time}"
+                    )
+            raise OptionValidationError("Engine wrapper failed to construct a command")
+
+        def parse_bestmove_line(line: str) -> Evaluation:
+            raise NotImplementedError
+
+        def handle_info_line(line: str) -> None:
+            pass
+
+        go_command: str = build_go_command(depth=depth, time_ms=time_ms)
+
+        full_command: List[str] = [f"position fen {fen}\n", go_command]
+
+        start_time: float | None = time.monotonic() if time_ms else None
+
+        for command in full_command:
+            assert self._proc.stdin is not None
+            self._proc.stdin.write(command)
+
+        while True:
+            if time_ms is not None:
+                assert start_time is not None
+                elapsed_time: float = (time.monotonic() - start_time) * 1000
+
+                if elapsed_time >= time_ms:
+                    self._proc.terminate()
+                    raise EngineTimeoutError(
+                        f"Engine analysis exceeded maximum time: {time_ms}"
+                    )
+
+            rc = self._proc.poll()
+
+            if rc is not None:
+                raise EngineProcessError(f"Engine exited with code {rc}")
+
+            assert self._proc.stdout is not None
+            line = self._proc.stdout.readline()
+            if not line:
+                time.sleep(0.005)
+                continue
+
+            line = line.strip()
+
+            if line.startswith("bestmove: "):
+                return parse_bestmove_line(line)
+
+            if line.startswith("info "):
+                handle_info_line(line)
+                continue
+
+        return EngineProcessError("Analysis exited loop without producing a result")
 
     def close(self) -> None:
         # stub to be updated
