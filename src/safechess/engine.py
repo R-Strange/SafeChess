@@ -117,7 +117,27 @@ class StockfishEngine(Engine):
             raise NotImplementedError
 
         def handle_info_line(line: str) -> None:
-            pass
+            line_components: List[str] = line.split()
+
+            if "score" not in line_components:
+                raise EngineParseError(
+                    "Error, malformed line: no score component returned by Engine"
+                )
+
+            score_index: int = line_components.index("score")
+
+            expected_next_commands: List[str] = ["cp", "mate"]
+            if line_components[score_index + 1] not in expected_next_commands:
+                raise EngineParseError(
+                    "Error, malformed line. Score component missing cp/mate statement"
+                )
+
+            try:
+                int(line_components[score_index + 2])
+            except ValueError:
+                raise EngineParseError(
+                    "Error, malformed line. Score CP or Mate missing value."
+                )
 
         go_command: str = build_go_command(depth=depth, time_ms=time_ms)
 
