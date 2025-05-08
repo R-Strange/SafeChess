@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from subprocess import PIPE
 from typing import Dict, List, Optional
 
+from chess import Board
+
 # --- ERROR TAXONOMY ---
 
 
@@ -138,6 +140,11 @@ class StockfishEngine(Engine):
                 raise EngineParseError(
                     "Error, malformed line. Score CP or Mate missing value."
                 )
+
+        try:
+            _ = Board(fen)
+        except ValueError:
+            raise InvalidFenError("FEN not valid")
 
         go_command: str = build_go_command(depth=depth, time_ms=time_ms)
 
