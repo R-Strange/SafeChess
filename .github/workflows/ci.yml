@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
 name: CI
 
 on:
@@ -7,49 +9,64 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  black:
+    name: Black
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.12]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: python-version: "3.12"
+      - run: pip install black
+      - run: black --check .
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
+  isort:
+    name: isort
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: python-version: "3.12"
+      - run: pip install isort
+      - run: isort --check-only --profile=black .
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
-          pip install -e .[dev]
+  flake8:
+    name: Flake8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: python-version: "3.12"
+      - run: pip install flake8
+      - run: flake8 --max-line-length=88 .
 
-      - name: Pre-commit checks
-        run: |
-          pre-commit run --all-files
+  mypy:
+    name: Mypy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: python-version: "3.12"
+      - run: pip install mypy
+      - run: mypy src/
 
-      - name: Run tests with coverage
-        run: |
-          pytest \
-            --cov=safechess \
-            --cov-report=xml:coverage.xml \
-            --cov-report=term-missing \
-            tests/
+  pytest:
+    name: Pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with: python-version: "3.12"
+      - run: pip install -e .[dev]
+      - run: pytest --cov=safechess --cov-report=xml:coverage.xml
 
-      - name: Dump coverage.xml for inspection
-        run: |
-          echo "=== coverage.xml contents ==="
-          head -n 30 coverage.xml || true
-          echo "=== End of snippet ==="
-          wc -l coverage.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+  codecov:
+    name: Codecov
+    needs: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
-          verbose: true
           fail_ci_if_error: true
