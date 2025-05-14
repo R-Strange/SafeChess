@@ -1,10 +1,12 @@
 # SafeChess
 
-[![CI](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml)
+[![Black](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg?job=black)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml)
+[![isort](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg?job=isort)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml)
+[![Flake8](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg?job=flake8)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml)
+[![Mypy](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg?job=mypy)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml)
+[![Tests](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg?job=pytest)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml)
 [![Codecov](https://codecov.io/gh/R-Strange/safechess/branch/main/graph/badge.svg)](https://codecov.io/gh/R-Strange/safechess)
-[![Black Formatter](https://github.com/R-Strange/safechess/actions/workflows/black.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/black.yml)
-[![isort](https://github.com/R-Strange/safechess/actions/workflows/isort.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/isort.yml)
-[![mypy](https://github.com/R-Strange/safechess/actions/workflows/mypy.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/mypy.yml)
+
 
 
 A Python tool to analyze the *instability* (risk) of engine-preferred opening moves in chess. SafeChess processes PGN files (and later FEN or Polyglot books) to compute a continuous “Instability Metric” over the first ~15 plies, helping players understand the volatility of opening lines.  
