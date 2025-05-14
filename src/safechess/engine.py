@@ -80,6 +80,8 @@ class StockfishEngine(Engine):
 
         self._options: Dict[str, str] = {}
 
+        self.best_evaluation: Evaluation | None = None
+
     def set_option(self, name: str, value: str | int) -> None:
         value = str(value)
         command: str = f"setoption name {name} value {value}\n"
@@ -88,7 +90,7 @@ class StockfishEngine(Engine):
         self._proc.stdin.write(command)
         self._options[name] = value
         # TODO error handling if proc cmd fails,
-        # so that ouroptions dict doesn't go out of sync
+        # so that our options dict doesn't go out of sync
 
     def analyse(
         self, fen: str, *, depth: int | None = None, time_ms: int | None = None
@@ -115,10 +117,10 @@ class StockfishEngine(Engine):
                     )
             raise OptionValidationError("Engine wrapper failed to construct a command")
 
-        def parse_bestmove_line(line: str) -> Evaluation:
-            raise NotImplementedError
+        # def parse_bestmove_line(line: str) -> bool:
+        #    pass
 
-        def handle_info_line(line: str) -> None:
+        def handle_info_line(line: str) -> Evaluation:
             line_components: List[str] = line.split()
 
             if "score" not in line_components:
@@ -129,6 +131,7 @@ class StockfishEngine(Engine):
             score_index: int = line_components.index("score")
 
             expected_next_commands: List[str] = ["cp", "mate"]
+
             if line_components[score_index + 1] not in expected_next_commands:
                 raise EngineParseError(
                     "Error, malformed line. Score component missing cp/mate statement"
@@ -140,6 +143,28 @@ class StockfishEngine(Engine):
                 raise EngineParseError(
                     "Error, malformed line. Score CP or Mate missing value."
                 )
+
+            score_value: int = int(line_components[score_index + 2])
+            pv: List[str] = line_components[score_index + 4 :]
+
+            match line_components[score_index + 1]:
+                case "cp":
+                    latest_evaluation = Evaluation(
+                        score_cp=score_value, mate=None, pv=pv
+                    )
+
+                case "mate":
+                    latest_evaluation = Evaluation(
+                        score_cp=None, mate=score_value, pv=pv
+                    )
+
+                case _:
+                    raise EngineParseError(
+                        "Error, malformed line. \
+                        Score component missing cp/mate statement"
+                    )
+
+            return latest_evaluation
 
         try:
             _ = Board(fen)
@@ -180,11 +205,12 @@ class StockfishEngine(Engine):
 
             line = line.strip()
 
-            if line.startswith("bestmove: "):
-                return parse_bestmove_line(line)
+            if line.startswith("bestmove "):
+                assert self.best_evaluation is not None
+                return self.best_evaluation
 
             if line.startswith("info "):
-                handle_info_line(line)
+                self.best_evaluation = handle_info_line(line)
                 continue
 
         return EngineProcessError("Analysis exited loop without producing a result")
