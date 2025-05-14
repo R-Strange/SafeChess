@@ -1,6 +1,6 @@
 # SafeChess
 
-[![CI](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml) [![Codecov](https://codecov.io/gh/R-Strange/safechess/branch/main/graph/badge.svg)](https://codecov.io/gh/R-Strange/safechess) [![Black Logo](https://raw.githubusercontent.com/psf/black/main/docs/_static/logo2-readme.png)](https://black.readthedocs.io/en/stable/)
+[![CI](https://github.com/R-Strange/safechess/actions/workflows/ci.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/ci.yml) [![Codecov](https://codecov.io/gh/R-Strange/safechess/branch/main/graph/badge.svg)](https://codecov.io/gh/R-Strange/safechess) [![Black Formatter](https://github.com/R-Strange/safechess/actions/workflows/black.yml/badge.svg)](https://github.com/R-Strange/safechess/actions/workflows/black.yml)
 
 
 A Python tool to analyze the *instability* (risk) of engine-preferred opening moves in chess. SafeChess processes PGN files (and later FEN or Polyglot books) to compute a continuous “Instability Metric” over the first ~15 plies, helping players understand the volatility of opening lines.  
