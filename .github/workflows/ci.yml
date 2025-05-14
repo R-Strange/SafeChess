@@ -33,11 +33,23 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=src --cov-report=xml
+          pytest \
+            --cov=safechess \
+            --cov-report=xml:coverage.xml \
+            --cov-report=term-missing \
+            tests/
+
+      - name: Dump coverage.xml for inspection
+        run: |
+          echo "=== coverage.xml contents ==="
+          head -n 30 coverage.xml || true
+          echo "=== End of snippet ==="
+          wc -l coverage.xml
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
+          verbose: true
           fail_ci_if_error: true
