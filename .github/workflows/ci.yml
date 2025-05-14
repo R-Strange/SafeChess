@@ -71,16 +71,25 @@ jobs:
             --cov-report=term-missing \
             --cov-report=xml:coverage.xml \
             tests/
-
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage.xml
+  
   codecov:
-    name: Codecov (bash uploader)
     needs: pytest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      - name: Upload coverage via bash uploader
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          curl -s https://codecov.io/bash | bash -s -- -f coverage.xml -v
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-report
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          verbose: true
+          fail_ci_if_error: true
