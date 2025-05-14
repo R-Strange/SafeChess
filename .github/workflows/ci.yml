@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-
 name: CI
 
 on:
@@ -56,32 +55,22 @@ jobs:
         run: mypy src/
 
   pytest:
-    name: Pytest
+    name: Tests & Coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: "3.12"
-      - run: pip install -e .[dev]
-      - name: Run tests & collect coverage
+      - name: Install project & dev tools
+        run: pip install -e .[dev]
+      - name: Run tests and generate coverage
         run: |
           pytest \
             --cov=safechess \
             --cov-report=term-missing \
             --cov-report=xml:coverage.xml \
             tests/
-      - name: Show workspace layout & coverage file
-        run: |
-          echo "→ PWD: $(pwd)"
-          echo "→ Listing top-level files:"
-          ls -1
-          echo "→ Recursive find (3 levels):"
-          find . -maxdepth 3 | sed 's/^/  /'
-          echo "→ coverage.xml head:"
-          head -n 20 coverage.xml || true
-          echo "→ coverage.xml lines:"
-          wc -l coverage.xml || true
 
   codecov:
     name: Codecov
