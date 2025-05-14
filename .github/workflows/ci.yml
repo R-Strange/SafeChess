@@ -85,6 +85,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: '**/coverage.xml'
-          root_dir: ./SafeChess
           verbose: true
           fail_ci_if_error: true
