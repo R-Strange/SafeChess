@@ -73,16 +73,14 @@ jobs:
             tests/
 
   codecov:
-    name: Codecov
+    name: Codecov (bash uploader)
     needs: pytest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+
+      - name: Upload coverage via bash uploader
         env:
-          DEBUG: true
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true
-          fail_ci_if_error: true
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          curl -s https://codecov.io/bash | bash -s -- -f coverage.xml -v
