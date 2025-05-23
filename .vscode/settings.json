@@ -20,5 +20,6 @@
     "-q" // quiet output, matches CI
   ],
   // optional: re-discover tests on save
-  "python.testing.autoTestDiscoverOnSaveEnabled": true
+  "python.testing.autoTestDiscoverOnSaveEnabled": true,
+  "python.analysis.typeCheckingMode": "off"
 }
