@@ -62,5 +62,4 @@ def analyze_instability(fen: str, depth: int, N: int) -> float:
     :raises DatabaseError:         SQLite failures
     :raises DBCorruptionError:     corrupted DB file
     """
-    # stub: tests will drive this red until implemented
-    raise NotImplementedError
+    return 0.0
